@@ -76,6 +76,10 @@ async function handlePick(interaction) {
 
   const player = db.getOrCreatePlayer(userId, username);
 
+  if (player.tier === 'bench') {
+    return interaction.reply({ embeds: [errorEmbed('Only **Goon Elite** players can submit picks! Get promoted first 🔥')], ephemeral: true });
+  }
+
   if (player.sold_acca) {
     return interaction.reply({ embeds: [errorEmbed('You sold your acca this cycle — you\'re relegated and cannot pick!')], ephemeral: true });
   }
@@ -254,13 +258,18 @@ async function handleSellAcca(interaction) {
 
   const embed = new EmbedBuilder()
     .setColor(BENCH_COLOR)
-    .setTitle('💸 Acca Sold — Instant Relegation!')
-    .setDescription(`**${interaction.user.username}** has sold their acca and is immediately relegated to the Goon Bench! 😬`);
+    .setTitle('💸 ACCA SOLD — INSTANT RELEGATION!')
+    .setDescription([
+      `😱 **${interaction.user.username}** has SOLD their acca!`,
+      '',
+      '> They are immediately relegated to the **Goon Bench**!',
+      '> What a bottle job. Absolutely disgraceful. 🐔',
+    ].join('\n'));
 
   await interaction.reply({ embeds: [embed] });
 
   const channel = await getAnnouncementChannel();
-  if (channel) await channel.send({ embeds: [embed] });
+  if (channel) await channel.send({ content: '@everyone', embeds: [embed] });
 }
 
 // ── /verify (admin) ───────────────────────────────────────────
