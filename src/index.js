@@ -76,10 +76,6 @@ async function handlePick(interaction) {
 
   const player = db.getOrCreatePlayer(userId, username);
 
-  if (player.tier === 'bench') {
-    return interaction.reply({ embeds: [errorEmbed('Only **Goon Elite** players can submit picks! Get promoted first 🔥')], ephemeral: true });
-  }
-
   if (player.sold_acca) {
     return interaction.reply({ embeds: [errorEmbed('You sold your acca this cycle — you\'re relegated and cannot pick!')], ephemeral: true });
   }
@@ -249,6 +245,10 @@ async function handleRules(interaction) {
 
 async function handleSellAcca(interaction) {
   const player = db.getOrCreatePlayer(interaction.user.id, interaction.user.username);
+
+  if (player.tier === 'bench') {
+    return interaction.reply({ embeds: [errorEmbed('You\'re on the **Goon Bench** — you\'re not in the acca! Focus on getting promoted 🔥')], ephemeral: true });
+  }
 
   if (player.sold_acca) {
     return interaction.reply({ embeds: [errorEmbed('You\'ve already sold your acca this cycle!')], ephemeral: true });
